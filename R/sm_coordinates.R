@@ -22,21 +22,6 @@
 #' coord_sf_santi(bbox = a, expansion = space(r = 0.5))
 #' @export
 
-waiver <- function() structure(list(), class = "waiver")
-
-is.waive <- function(x) inherits(x, "waiver")
-
-parse_axes_labeling <- function(x) {
-  labs = unlist(strsplit(x, ""))
-  list(top = labs[1], right = labs[2], bottom = labs[3], left = labs[4])
-}
-
-space <- function (t = 0, r = 0, b = 0, l = 0)
-{
-  u <- c(t/1000, r/1000, b/1000, l/1000)
-  u
-}
-
 sm_coordinates <- function (data = NULL, bbox = NULL, xlim = NULL, ylim = NULL, expand = TRUE, crs = NULL,
                             datum = sf::st_crs(4326), label_graticule = waiver(), label_axes = waiver(),
                             ndiscr = 100, default = FALSE, clip = "on", projected = F,
@@ -94,4 +79,19 @@ sm_coordinates <- function (data = NULL, bbox = NULL, xlim = NULL, ylim = NULL, 
           datum = datum, crs = crs, label_axes = label_axes, label_graticule = label_graticule,
           ndiscr = ndiscr, expand = expand, default = default,
           clip = clip)
+}
+
+waiver <- function() structure(list(), class = "waiver")
+
+is.waive <- function(x) inherits(x, "waiver")
+
+parse_axes_labeling <- function(x) {
+  labs = unlist(strsplit(x, ""))
+  list(top = labs[1], right = labs[2], bottom = labs[3], left = labs[4])
+}
+
+space <- function (t = 0, r = 0, b = 0, l = 0)
+{
+  u <- c(t/1000, r/1000, b/1000, l/1000)
+  u
 }
