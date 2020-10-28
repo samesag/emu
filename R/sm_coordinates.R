@@ -4,7 +4,11 @@
 #' @param data The dataframe containing the spatial information for the box limits.
 #' @param bbox An st_bbox objetc as a named vector for getting the box limits
 #' @param expansion a vector trbl for expandin any dimension over the initial limits
-#' @param projected logical, if T the original source (data or bbox) is in a projected CRS
+#' @param projected_base logical, if T the original source (data or bbox) is in a projected CRS
+#' @param r_xmin the sf object to replace the dimension xmin
+#' @param r_xmax the sf object to replace the dimension xmax
+#' @param r_ymin the sf object to replace the dimension ymin
+#' @param r_ymax the sf object to replace the dimension ymax
 #' @keywords coordinates crs ggplot expansion zoom
 #' @return The coordinates for an accurate plot
 #' @examples
@@ -23,13 +27,14 @@
 #' @export
 
 sm_coordinates <- function (data = NULL, bbox = NULL, xlim = NULL, ylim = NULL, expand = TRUE, crs = NULL,
-                            datum = sf::st_crs(4326), label_graticule = waiver(), label_axes = waiver(),
-                            ndiscr = 100, default = FALSE, clip = "on", projected = F,
-                            expansion = space(t = 0, r = 0, b = 0, l = 0))
+                             r_xmin = NULL, r_xmax = NULL, r_ymin = NULL, r_ymax = NULL,
+                             datum = sf::st_crs(4326), label_graticule = waiver(), label_axes = waiver(),
+                             ndiscr = 100, default = FALSE, clip = "on", projected_base = F,
+                             expansion = space(t = 0, r = 0, b = 0, l = 0))
 {
   library(sf)
 
-  if(projected){
+  if(projected_base){
     if(!missing(data)){
       data <- data %>%
         st_transform(crs = 4326)} else {
@@ -46,6 +51,32 @@ sm_coordinates <- function (data = NULL, bbox = NULL, xlim = NULL, ylim = NULL, 
   if(!missing(bbox)){
     xlim = c(as.numeric(bbox[["xmin"]]), as.numeric(bbox[["xmax"]]))
     ylim = c(as.numeric(bbox[["ymin"]]), as.numeric(bbox[["ymax"]]))
+  }
+
+  ## Reemplazo
+  if (!missing(r_xmin)) {
+    if (projected_base) {
+      r_xmin <- st_transform(r_xmin, crs = 4326)
+    }
+    xlim[1] <- st_bbox(r_xmin)[["xmin"]]
+  }
+  if (!missing(r_ymin)) {
+    if (projected_base) {
+      r_ymin <- st_transform(r_ymin, crs = 4326)
+    }
+    ylim[1] <- st_bbox(r_ymin)[["ymin"]]
+  }
+  if (!missing(r_xmax)) {
+    if (projected_base) {
+      r_xmax <- st_transform(r_xmax, crs = 4326)
+    }
+    xlim[2] <- st_bbox(r_xmax)[["xmax"]]
+  }
+  if (!missing(r_ymax)) {
+    if (projected_base) {
+      r_ymax <- st_transform(r_ymax, crs = 4326)
+    }
+    ylim[2] <- st_bbox(r_ymax)[["ymax"]]
   }
 
   ## Expansión

@@ -11,13 +11,17 @@ sm_coordinates(
   ylim = NULL,
   expand = TRUE,
   crs = NULL,
+  r_xmin = NULL,
+  r_xmax = NULL,
+  r_ymin = NULL,
+  r_ymax = NULL,
   datum = sf::st_crs(4326),
   label_graticule = waiver(),
   label_axes = waiver(),
   ndiscr = 100,
   default = FALSE,
   clip = "on",
-  projected = F,
+  projected_base = F,
   expansion = space(t = 0, r = 0, b = 0, l = 0)
 )
 }
@@ -26,7 +30,15 @@ sm_coordinates(
 
 \item{bbox}{An st_bbox objetc as a named vector for getting the box limits}
 
-\item{projected}{logical, if T the original source (data or bbox) is in a projected CRS}
+\item{r_xmin}{the sf object to replace the dimension xmin}
+
+\item{r_xmax}{the sf object to replace the dimension xmax}
+
+\item{r_ymin}{the sf object to replace the dimension ymin}
+
+\item{r_ymax}{the sf object to replace the dimension ymax}
+
+\item{projected_base}{logical, if T the original source (data or bbox) is in a projected CRS}
 
 \item{expansion}{a vector trbl for expandin any dimension over the initial limits}
 }
