@@ -21,6 +21,9 @@ join_points_lines <- function(points, lines, crs_projected = NULL, crs_out = NUL
   library(sf)
   library(sp)
 
+  if ((!"sf" %in% class(points)) | (!"sf" %in% class(lines))) {
+    stop("objects points and lines must be sf class")
+  }
   if(missing(crs_projected)){
     crs_projected <- 3116
   }
