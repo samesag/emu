@@ -19,7 +19,7 @@
 join_points_lines <- function(points, lines, crs_projected = NULL, crs_out = NULL){
 
   require(sf)
-  require(sp)
+  require(maptools)
 
   if ((!"sf" %in% class(points)) | (!"sf" %in% class(lines))) {
     stop("objects points and lines must be sf class")
