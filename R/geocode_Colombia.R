@@ -35,6 +35,7 @@ geocode_Colombia <- function(df, CRS, id, address, city) {
 
   df <- df %>%
     mutate(!!city := case_when(.data[[city]] == "Bogotá D.C." ~ "Bogota",
+                               .data[[city]] == "Bogotá" ~ "Bogota",
                                TRUE ~ .data[[city]]))
 
   geocodeSantiago <- function(df, id, address, city, CRS){
