@@ -16,7 +16,7 @@
 #' direcciones <- geocode_google_Colombia(df, "direccion_google", key = "ABC", suffix = "_com", barrio = T, codigo_postal = T)
 #' @export
 
-geocode_google_Colombia <- function(df, direccion, key, suffix, barrio, codigo_postal, join, join_id, ...){
+geocode_google_Colombia <- function(df, direccion, key, suffix, barrio, codigo_postal, join, join_id){
 
   require(tidyverse)
   require(googleway)

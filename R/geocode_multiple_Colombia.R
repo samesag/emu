@@ -31,9 +31,9 @@ geocode_multiple_Colombia <- function(df, key, id_col, join_id, ...){
   if(missing(join_id)) join_id = NULL
 
   df2 <- df %>%
-    emu::geocode_Colombia(CRS = 4326, ...) %>%
+    geocode_Colombia(CRS = 4326, ...) %>%
     {. ->> df1} %>% filter(., is.na(lon)) %>%
-    emu::geocode_google_Colombia(key = key, join_id = join_id, ...) %>%
+    geocode_google_Colombia(key = key, join_id = join_id, ...) %>%
     full_join(., df1) %>%
     mutate(geocoded = case_when(!is.na(lon) ~ 1,
                                 !is.na(lon_gm) ~ 2,
