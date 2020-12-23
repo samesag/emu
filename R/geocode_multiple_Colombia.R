@@ -17,18 +17,14 @@
 #' ver <- geocode_multiple(bd, key)
 #' @export
 
-geocode_multiple_Colombia <- function(df, key, id_col, join_id, ...){
+geocode_multiple_Colombia <- function(df, key, id_col = NULL, join_id = NULL, ...){
 
-  if(missing(id_col)){
+  if(is.null(id_col)){
     if("id" %in% names(df)){
       id_col = "id"
       warning('Se asume que la columna "id" es el identificador único de las direcciones. En caso contrario, especifíque el parámetro id_col')
-    } else {
-      id_col = NULL
     }
   }
-
-  if(missing(join_id)) join_id = NULL
 
   df2 <- df %>%
     geocode_Colombia(CRS = 4326, ...) %>%
