@@ -69,7 +69,6 @@ geocode_google_Colombia <- function(df, direccion, key, suffix, barrio, codigo_p
   )
 
   formato <- vector(mode = "list", length = 1)
-  resultados[[5]]$results$address_components
 
   for (i in 1:length(resultados)) {
 
