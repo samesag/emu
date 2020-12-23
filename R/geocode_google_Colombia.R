@@ -9,6 +9,7 @@
 #' @param barrio Logical. If true, returns the information of the neighborhood
 #' @param codigo_postal Logical. If true, returns the information of the postal code
 #' @param join Logical. If true, the resultant dataframe is united with the original dataframe
+#' @param join_id A string indicating the name of the column to join the results into the new dataframe
 #' @keywords geocode google Colombia Bogota
 #' @return A dataframe containing the coordinates in crs 4326 with the addresses geocoded
 #' @examples
@@ -175,14 +176,16 @@ geocode_google_Colombia <- function(df, direccion, key, suffix, barrio, codigo_p
     mutate(localidad = case_when(localidad == "Comuna Ciudad Bolívar" ~ "Ciudad Bolívar",
                                  localidad == "Comuna Chapinero"  ~ "Chapinero",
                                  localidad == "Santa Fé" ~ "Santa Fe",
-                                 ciudad != "Bogotá" ~ NA_character_,
+                                 ciudad != "Bogotá" && !is.na(ciudad) ~ "Fuera de Bogotá",
+                                 is.na(localidad) ~ NA_character_,
+                                 is.na(ciudad) ~ NA_character_,
                                  T ~ localidad)) %>%
     {if(!is.null(suffix)) rename_with(., ~paste0(., suffix)) else .}
 
   ## Creación del dataframe de salida
   if(join == T){
 
-    if(is.null(join_id)) warning("No se especificó join_id, se unirán los dataframes según todas las columnas coincidentes")
+    # if(is.null(join_id)) warning("No se especificó join_id, se unirán los dataframes según todas las columnas coincidentes")
 
     union <- df %>%
       bind_cols(., geocoded) %>%

@@ -29,6 +29,8 @@ geocode_google_Colombia(
 \item{codigo_postal}{Logical. If true, returns the information of the postal code}
 
 \item{join}{Logical. If true, the resultant dataframe is united with the original dataframe}
+
+\item{join_id}{A string indicating the name of the column to join the results into the new dataframe}
 }
 \value{
 A dataframe containing the coordinates in crs 4326 with the addresses geocoded
