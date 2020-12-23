@@ -12,7 +12,8 @@ geocode_google_Colombia(
   barrio,
   codigo_postal,
   join,
-  join_id
+  join_id,
+  ...
 )
 }
 \arguments{

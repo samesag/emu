@@ -12,7 +12,7 @@
 #' geocode_Colombia(df, 3116, "id","street", "city")
 #' @export
 
-geocode_Colombia <- function(df, CRS, id, address, city) {
+geocode_Colombia <- function(df, CRS, id, address, city, ...) {
 
   if (missing(id)) {if("id" %in% colnames(df)){id <- "id"}
     else if ("ID" %in% colnames(df)) {id <- "ID"}

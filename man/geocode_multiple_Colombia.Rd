@@ -4,7 +4,7 @@
 \alias{geocode_multiple_Colombia}
 \title{geocode in Colombia using the ESRI API geocoding server first}
 \usage{
-geocode_multiple_Colombia(df, key, id_col, join_id)
+geocode_multiple_Colombia(df, key, id_col, join_id, ...)
 }
 \arguments{
 \item{df}{The dataframe containing the information.}
