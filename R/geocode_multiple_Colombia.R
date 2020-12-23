@@ -17,7 +17,7 @@
 #' ver <- geocode_multiple(bd, key)
 #' @export
 
-geocode_multiple_Colombia <- function(df, key, id_col = NULL, join_id = NULL, ...){
+geocode_multiple_Colombia <- function(df, key, ..., id_col = NULL, join_id = NULL){
 
   if(is.null(id_col)){
     if("id" %in% names(df)){
