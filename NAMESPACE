@@ -2,6 +2,7 @@
 
 export(answer_as_binary)
 export(colores_EMU)
+export(emu_tabyl)
 export(factores_EMU)
 export(geocode_Colombia)
 export(geocode_google_Colombia)

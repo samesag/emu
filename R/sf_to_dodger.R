@@ -9,6 +9,7 @@
 #' @return A dodgr object
 #' @examples
 #'
+#' ## tm is an sf object which was cleaned by v.clean using GRASS in QGIS
 #' sf_to_dodger(tm)
 
 sf_to_dodgr <- function(net, id_col, wt_profile){

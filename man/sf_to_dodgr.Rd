@@ -21,6 +21,7 @@ This function return a dodger object (as a dataframe) from a sf object. Is usefu
 }
 \examples{
 
+## tm is an sf object which was cleaned by v.clean using GRASS in QGIS
 sf_to_dodger(tm)
 }
 \keyword{dodgr}
