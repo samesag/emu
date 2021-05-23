@@ -71,7 +71,8 @@ geocode_Colombia <- function(df, CRS, id, address, city) {
     adr_json_enc <- URLencode(adr_json, reserved = TRUE) #?
 
     # Servidor de geocodificación
-    gserver <- "http://157.253.236.252:6080/arcgis/rest/services/geocode/Colombia_Geocode/GeocodeServer/geocodeAddresses"
+    gserver <- "http://sinupotp.sdp.gov.co:6080/arcgis/rest/services/Bogota/GeocodeServer/geocodeAddresses"
+
 
     # Subir los datos al servidor de geocodificación
     req <- POST(
@@ -109,7 +110,7 @@ geocode_Colombia <- function(df, CRS, id, address, city) {
     df <- df %>%
       arrange(.data[[id]])
     base1 <- df
-    n <- ceiling(nrow(df)/1000)
+    n <- ceiling(nrow(df)/100)
     df_lista <- split(df, f = rep_len(1:n, nrow(df)))
     df <- lapply(df_lista, function(x) geocodeSantiago(x,id,address,city,CRS))
     df <- do.call(rbind, df)
