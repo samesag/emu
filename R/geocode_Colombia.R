@@ -12,7 +12,10 @@
 #' geocode_Colombia(df, 3116, "id","street", "city")
 #' @export
 
-geocode_Colombia <- function(df, CRS, id, address, city) {
+geocode_Colombia <- function(df, CRS, id, address, city, names_crs, names_sep) {
+
+  if (missing(names_crs)){names_crs <- T}
+  if (missing(names_sep)){names_sep <- "_"}
 
   if (missing(id)) {if("id" %in% colnames(df)){id <- "id"}
     else if ("ID" %in% colnames(df)) {id <- "ID"}
@@ -120,8 +123,17 @@ geocode_Colombia <- function(df, CRS, id, address, city) {
     row.names(df) <- NULL
     x = names(base1)[1]
     y = names(df)[1]
-    base1 <- merge.data.frame(base1, subset(df, select = c("id","lon","lat","matchAddr")), by.x = x, by.y = y, all.x = T)
-    return(base1)
+    base1 <- merge.data.frame(base1, subset(df, select = c("id","lon","lat","matchAddr")),
+                              by.x = x, by.y = y, all.x = T)
+
+    if(names_crs == F){
+      return(base1)
+    } else {
+      names(base1)[names(base1) == "lon"] <- paste0("lon", names_sep, CRS)
+      names(base1)[names(base1) == "lat"] <- paste0("lat", names_sep, CRS)
+      return(base1)
+    }
+
   } else if ("list" %in% class(df)) {
     stop("Por favor programe la función para listas")
   }

@@ -4,7 +4,7 @@
 \alias{geocode_Colombia}
 \title{geocode in Colombia}
 \usage{
-geocode_Colombia(df, CRS, id, address, city)
+geocode_Colombia(df, CRS, id, address, city, names_crs, names_sep)
 }
 \arguments{
 \item{df}{The dataframe containing the information.}
