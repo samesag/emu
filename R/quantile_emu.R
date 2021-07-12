@@ -15,28 +15,27 @@
 #' quantile_emu(bd, var = value)
 #' @export
 
-quantile_emu <- function(df, var, min.seq = NULL, max.seq = NULL, by = NULL,
-                         labels = NULL, labels.mark = NULL,
-                         include.lowest = NULL){
+quantile_emu <- function(df, var, min.seq, max.seq, by, labels, labels.mark,
+                         include.lowest){
 
   if(!missing(var)) var <- rlang::enquo(var)
-  if(!missing(min.seq)) min.seq <- 0
-  if(!missing(max.seq)) max.seq <- 1
-  if(!missing(by)) by <- 0.25
-  if(!missing(labels)) labels <- T
-  if(!missing(labels.mark)) labels.mark <- 1:4
-  if(!missing(include.lowest)) include.lowest <- T
+  if(missing(min.seq)) min.seq <- 0
+  if(missing(max.seq)) max.seq <- 1
+  if(missing(by)) by <- 0.25
+  if(missing(labels)) labels <- T
+  if(missing(labels.mark)) labels.mark <- 1:4
+  if(missing(include.lowest)) include.lowest <- T
 
-  if (missing(var1)) {
+  if (missing(var)) {
     stop("Please specify a variable to calculate the quantile")
   }
 
   if (labels == T){
-  column <- df %>%
-    pull(!!var) %>%
-    cut(breaks = quantile(., probs = seq(min.seq, max.seq, by = by), na.rm = TRUE),
-        include.lowest = include.lowest,
-        labels = labels.mark)
+    column <- df %>%
+      pull(!!var) %>%
+      cut(breaks = quantile(., probs = seq(min.seq, max.seq, by = by), na.rm = TRUE),
+          include.lowest = include.lowest,
+          labels = labels.mark)
   }
 
   if (labels == F){
@@ -46,4 +45,5 @@ quantile_emu <- function(df, var, min.seq = NULL, max.seq = NULL, by = NULL,
           include.lowest = include.lowest)
   }
   return(column)
+
 }

@@ -7,12 +7,12 @@
 quantile_emu(
   df,
   var,
-  min.seq = NULL,
-  max.seq = NULL,
-  by = NULL,
-  labels = NULL,
-  labels.mark = NULL,
-  include.lowest = NULL
+  min.seq,
+  max.seq,
+  by,
+  labels,
+  labels.mark,
+  include.lowest
 )
 }
 \arguments{
