@@ -59,5 +59,6 @@ emu_tabyl <- function(df, var1, var2, var3, expansion = f_exp, show_na = T, ...)
   else {
     stop("please specify var1 OR var1 & var2 OR var1 & var2 & var3")
   }
+  df2 <- df2 %>% ungroup()
   return(df2)
 }
