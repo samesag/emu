@@ -28,16 +28,16 @@ geocode_multiple_Colombia <- function(df, key, ..., id_col = NULL, join_id = NUL
 
   df2 <- df %>%
     geocode_Colombia(CRS = 4326, ...) %>%
-    {. ->> df1} %>% filter(., is.na(lon)) %>%
+    {. ->> df1} %>% filter(., is.na(lon_4326)) %>%
     geocode_google_Colombia(key = key, join_id = join_id) %>%
     full_join(., df1) %>%
-    mutate(geocoded = case_when(!is.na(lon) ~ 1,
+    mutate(geocoded = case_when(!is.na(lon_4326) ~ 1,
                                 !is.na(lon_gm) ~ 2,
                                 T ~ NA_real_),
-           lon = case_when(geocoded == 1 ~ lon,
+           lon = case_when(geocoded == 1 ~ lon_4326,
                            geocoded == 2 ~ lon_gm,
                            T ~ NA_real_),
-           lat = case_when(geocoded == 1 ~ lat,
+           lat = case_when(geocoded == 1 ~ lat_4326,
                            geocoded == 2 ~ lat_gm,
                            T ~ NA_real_),
            matchAddr = case_when(geocoded == 1 ~ matchAddr,
