@@ -11,6 +11,7 @@
 #' @param key The google API key used for geocoding with the Google Maps API.
 #' @param id_col The name of the column with the id for keeping track of your data (for each address).
 #' @param join_id A string indicating the name of the column to join the results into the new dataframe.
+#' @param direccion_gm The name of the column with the address in Google Maps format (addres, city, country)
 #' @keywords geocode, Colombia, address, geocoding, Google Maps.
 #' @return The coordinates of the address given.
 #' @examples

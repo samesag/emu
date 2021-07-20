@@ -14,6 +14,8 @@ geocode_multiple_Colombia(df, key, ..., id_col = NULL, join_id = NULL)
 \item{id_col}{The name of the column with the id for keeping track of your data (for each address).}
 
 \item{join_id}{A string indicating the name of the column to join the results into the new dataframe.}
+
+\item{direccion_gm}{The name of the column with the address in Google Maps format (addres, city, country)}
 }
 \value{
 The coordinates of the address given.
