@@ -1,11 +1,11 @@
 #' geocode in Colombia using the ESRI API geocoding server first
 #'
-#' This function allows you to geocode addresses in Colombia. The first attempt to geocode addresses is by using the ESRI
-#' API geocoding server. If any address is not geocoded, then this directions are geocoded using the Google Maps API
-#' (requires key). The result is a datframe with all the information recolected, specifying in the column geocoded with which
-#' server the address was geocoded (1: ESRI, 2: Google Maps). A column for localidad is specified when the address is geocoded
-#' with the Google Maps API, since the score of this geocoding process is not computated, so this may be the fastes way to
-#' verify the results obtained.
+#' This function allows you to geocode addresses in Colombia. The first attempt to geocode addresses is made using the ESRI
+#' API geocoding server. If any address are not geocoded, then these directions are geocoded using the Google Maps API
+#' (requires key). The result is a datframe with all the information recolected, specifying in column 'geocoded' which
+#' server was used (1: ESRI, 2: Google Maps). A column for localidad is specified when the address is geocoded
+#' using the Google Maps API, since the score of this geocoding process is not computated, so this may be the fastest way to
+#' verify the results.
 #'
 #' @param df The dataframe containing the information.
 #' @param key The google API key used for geocoding with the Google Maps API.
