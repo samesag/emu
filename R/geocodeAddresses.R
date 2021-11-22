@@ -38,10 +38,14 @@ geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, 
 
 
   if (!as_label(address) %in% names(df)) stop("La variable address no es una variable presente en el dataframe")
+  if(T %in% is.na(df[[as_name(address)]])) stop("La columna address no puede contener valores NA")
+
+
   if (!as_label(city) %in% names(df)) {
     remove_city <- T
     df <- df %>% mutate(city = as_name(!!city))
   } else {
+    if(T %in% is.na(df[[as_name(city)]])) stop("La columna city no puede contener valores NA")
     remove_city <- F
   }
 
