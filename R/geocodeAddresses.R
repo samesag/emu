@@ -31,6 +31,9 @@ geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, 
     names_sep <- "_"
   }
 
+  if (missing(address)) stop("Por favor inque el nombre de la columna que tiene la información de las direcciones")
+  if (missing(city)) stop("Por favor indique el nombre de la columna 'city' o ingrese entre comillas el nombre de una ciudad")
+
   if (!as_label(address) %in% names(df)) stop("La variable address no es una variable presente en el dataframe")
   if (!as_label(city) %in% names(df)) {
     remove_city <- T
