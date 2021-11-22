@@ -43,7 +43,7 @@ geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, 
 
   geocoded_list <- map(df_list, function(df) {
     content(POST(url = gserver, body = list(
-      Address = df[[as_name(address)]], City = "Bogotá", countryCode = "CO", f = "pjson", outSR = 4326
+      Address = df[[as_name(address)]], City = df[[as_name(city)]], countryCode = countryCode, f = "pjson", outSR = crs
     ), encode = "form"), "parsed", "application/json")$candidates[[1]]
   })
 
