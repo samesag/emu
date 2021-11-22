@@ -17,9 +17,9 @@
 
 geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, names_crs, names_sep) {
 
-  require(httr)
-  require(rlang)
-  require(tidyverse)
+  require(httr, quietly = T)
+  require(rlang, quietly = T)
+  require(tidyverse, quietly = T)
 
   if (missing(address) & missing(city)) stop("Por favor indique los parámetros address y city")
 
@@ -41,6 +41,8 @@ geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, 
   if (!as_label(city) %in% names(df)) {
     remove_city <- T
     df <- df %>% mutate(city = as_name(!!city))
+  } else {
+    remove_city <- F
   }
 
   gserver <- "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?"
