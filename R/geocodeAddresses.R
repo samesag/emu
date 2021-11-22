@@ -36,16 +36,14 @@ geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, 
     names_sep <- "_"
   }
 
-
   if (!as_label(address) %in% names(df)) stop("La variable address no es una variable presente en el dataframe")
-  if(T %in% is.na(df[[as_name(address)]])) stop("La columna address no puede contener valores NA")
-
+  if (T %in% is.na(df[[as_name(address)]])) stop("La columna address no puede contener valores NA")
 
   if (!as_label(city) %in% names(df)) {
     remove_city <- T
     df <- df %>% mutate(city = as_name(!!city))
   } else {
-    if(T %in% is.na(df[[as_name(city)]])) stop("La columna city no puede contener valores NA")
+    if (T %in% is.na(df[[as_name(city)]])) stop("La columna city no puede contener valores NA")
     remove_city <- F
   }
 
@@ -53,11 +51,19 @@ geocodeAddresses <- function(df, address, city, countryCode = "CO", crs = 3116, 
 
   df_list <- split(df, seq(nrow(df)))
 
-  geocoded_list <- map(df_list, function(df) {
-    content(POST(url = gserver, body = list(
-      Address = df[[as_name(address)]], City = df[[as_name(city)]], countryCode = countryCode, f = "pjson", outSR = crs
-    ), encode = "form"), "parsed", "application/json")$candidates[[1]]
-  })
+  if (remove_city == F) {
+    geocoded_list <- map(df_list, function(df) {
+      content(POST(url = gserver, body = list(
+        Address = df[[as_name(address)]], City = df[[as_name(city)]], countryCode = countryCode, f = "pjson", outSR = crs
+      ), encode = "form"), "parsed", "application/json")$candidates[[1]]
+    })
+  } else {
+    geocoded_list <- map(df_list, function(df) {
+      content(POST(url = gserver, body = list(
+        Address = df[[as_name(address)]], City = df[["city"]], countryCode = countryCode, f = "pjson", outSR = crs
+      ), encode = "form"), "parsed", "application/json")$candidates[[1]]
+    })
+  }
 
   if (names_crs == T) {
     geocoded_df <- map_df(geocoded_list, function(df) {
