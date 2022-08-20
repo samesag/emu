@@ -1,3 +1,15 @@
+#' A function to use the Steer colors in ggplot graphs
+#'
+#' This function allows you to geocode addresses in Colombia and get the results as a readable dataframe.
+#'
+#' @param name The name of the palette
+#' @param direction The direction for using the colors
+#' @keywords Steer colours palette
+#' @return The Steer palette for ggplot graphs
+#' @examples
+#' scale_fill_steer_d(name = "steer", direction = -1,)
+#' @export
+
 steer_colours = list(
   steer = c("#00B0DF", "#161B22", "#F8982D", "#01895E",
             "#9E9CA0", "#C03301", "#0073E3", "#D6E0E7")
