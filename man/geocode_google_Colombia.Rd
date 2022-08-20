@@ -11,6 +11,7 @@ geocode_google_Colombia(
   suffix,
   barrio,
   codigo_postal,
+  localidad,
   join,
   join_id
 )

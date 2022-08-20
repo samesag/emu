@@ -16,188 +16,244 @@
 #' direcciones <- geocode_google_Colombia(df, "direccion_google", key = "ABC", suffix = "_com", barrio = T, codigo_postal = T)
 #' @export
 
-geocode_google_Colombia <- function(df, direccion, key, suffix, barrio, codigo_postal, join, join_id){
-
+geocode_google_Colombia <- function(df, direccion, key, suffix, barrio, codigo_postal, localidad, join, join_id) {
   require(tidyverse)
   require(googleway)
-
-  # Depuración de la base de datos ----------------------------------------------------------------------------------
-
-  if(missing(suffix)) suffix = "_gm"
-  if(missing(barrio)) barrio = F
-  if(missing(codigo_postal)) codigo_postal = F
-  if(missing(join)) join = T
-  if(missing(join_id)) join_id = NULL
-
+  if (missing(suffix)) {
+    suffix <- "_gm"
+  }
+  if (missing(barrio)) {
+    barrio <- F
+  }
+  if (missing(codigo_postal)) {
+    codigo_postal <- F
+  }
+  if (missing(localidad)) {
+    localidad <- F
+  }
+  if (missing(join)) {
+    join <- T
+  }
+  if (missing(join_id)) {
+    join_id <- NULL
+  }
   original <- df
-
-  ## Revisión de la información de la columna de dirección
-  if(!missing(direccion)){
-
-    df <- df %>%
-      mutate(direccion_google = .data[[direccion]])
-
-  } else if ("direccion" %in% names(df) && "ciudad" %in% names(df)){
-
-    df <- df %>%
-      mutate(ciudad = case_when(ciudad == "Bogotá" ~ "Bogota", T ~ ciudad),
-             direccion_google = paste0(direccion, ", ", ciudad, ", Colombia"))
+  if (!missing(direccion)) {
+    df <- df %>% mutate(direccion_google = .data[[direccion]])
+  } else if ("direccion" %in% names(df) && "ciudad" %in% names(df)) {
+    df <- df %>% mutate(
+      ciudad = case_when(ciudad == "Bogotá" ~
+                           "Bogota", T ~ ciudad),
+      direccion_google = paste0(
+        direccion,
+        ", ", ciudad, ", Colombia"
+      )
+    )
     warning("La dirección de google se creó a partir de las columnas 'dirección' y 'ciudad'")
-
-  }else if (!"direccion_google" %in% names(df)) {
-
-    stop("Por favor indique en cuál columna está la información de la dirección en formato google (direccion, ciudad, país) con el parámetro dirección")
-
+  } else if (!"direccion_google" %in% names(df)) {
+    stop(
+      "Por favor indique en cuál columna está la información de la dirección en formato google (direccion, ciudad, país) con el parámetro dirección"
+    )
   }
-
-  ## Eliminación de los elementos NA en la base de datos
-
   if (F %in% complete.cases(df$direccion_google)) {
-
-    df <- df %>%
-      drop_na(direccion_google)
-    warning("Los valores de NA en la columna de dirección fueron eliminados. Revise el número de datos de salida")
-
+    df <- df %>% drop_na(direccion_google)
+    warning(
+      "Los valores de NA en la columna de dirección fueron eliminados. Revise el número de datos de salida"
+    )
   }
-
-  # Georreferenciación de las direcciones con el API de Google (requiere key) ---------------------------------------
-
-  ## Creación de los resultados en la lista resultados
-  resultados <- apply(df, 1, function(x){
-    google_geocode(address = x[["direccion_google"]],
-                   key = key,
-                   simplify = T)}
-  )
-
+  resultados <- apply(df, 1, function(x) {
+    google_geocode(
+      address = x[["direccion_google"]],
+      key = key,
+      simplify = T
+    )
+  })
   formato <- vector(mode = "list", length = 1)
-
   for (i in 1:length(resultados)) {
-
-    ## Creación de dataframe vacío si la dirección no se pudo encontrar
-    if(resultados[[i]]$status != "OK"){
-
-      formato[[i]] <- data.frame(ciudad = NA, localidad = NA, direccion = NA, lat = NA, lon = NA)
-
+    if (resultados[[i]]$status != "OK") {
+      if (localidad == T) {
+        formato[[i]] <- data.frame(
+          ciudad = NA,
+          localidad = NA,
+          direccion = NA,
+          lat = NA,
+          lon = NA
+        )
+      } else {
+        formato[[i]] <- data.frame(
+          ciudad = NA,
+          direccion = NA,
+          lat = NA,
+          lon = NA
+        )
+      }
     } else {
-
-      ## Creación de formato para la información de localidad
-      if(is.null(resultados[[i]]$results$address_components[[1]])){
-        localidad <- NA } else {
-          localidad <- as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
-            filter(types == 'c("political", "sublocality", "sublocality_level_1")') %>%
-            pull(long_name)}
-
-      ## Creación de formato para la información de ciudad
-      if(is.null(resultados[[i]]$results$address_components[[1]])){
-        ciudad <- NA } else {
-          ciudad <- as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
-            filter(types == 'c("administrative_area_level_2", "political")') %>%
-            pull(long_name) }
-      if(is_empty(ciudad)){
-        ciudad <- as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
-          filter(types == 'c("locality", "political")') %>%
-          pull(long_name)}
-      if(is_empty(ciudad)){
-        ciudad <- as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
-          filter(types == 'c("administrative_area_level_1", "political")') %>%
-          pull(long_name)}
-      if(is_empty(ciudad)){
+      if (localidad == T) {
+        if (is.null(resultados[[i]]$results$address_components[[1]])) {
+          localidad <- NA
+        } else {
+          localidad <-
+            as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
+            filter(types == "c(\"political\", \"sublocality\", \"sublocality_level_1\")") %>%
+            pull(long_name)
+        }
+      }
+      if (is.null(resultados[[i]]$results$address_components[[1]])) {
+        ciudad <- NA
+      } else {
+        ciudad <-
+          as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
+          filter(types == "c(\"administrative_area_level_2\", \"political\")") %>%
+          pull(long_name)
+      }
+      if (is_empty(ciudad)) {
+        ciudad <-
+          as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
+          filter(types == "c(\"locality\", \"political\")") %>%
+          pull(long_name)
+      }
+      if (is_empty(ciudad)) {
+        ciudad <-
+          as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
+          filter(types == "c(\"administrative_area_level_1\", \"political\")") %>%
+          pull(long_name)
+      }
+      if (is_empty(ciudad)) {
         ciudad <- NA
       }
-
-      ## Creación de formato para la información de barrio
-      if(barrio == T){
-        if('c("neighborhood", "political")' %in% resultados[[i]]$results$address_components[[1]]$types){
-          barrio <- as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
-            filter(types == 'c("neighborhood", "political")') %>%
+      if (barrio == T) {
+        if ("c(\"neighborhood\", \"political\")" %in%
+            resultados[[i]]$results$address_components[[1]]$types) {
+          barrio <-
+            as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
+            filter(types == "c(\"neighborhood\", \"political\")") %>%
             pull(long_name)
         } else {
           barrio <- NA
-        }}
-
-      ## Creación de formato para la información del código postal
-      if(codigo_postal == T){
-        if('postal_code' %in% resultados[[i]]$results$address_components[[1]]$types){
-          codigo_postal <- as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
-            filter(types == 'postal_code') %>%
+        }
+      }
+      if (codigo_postal == T) {
+        if ("postal_code" %in% resultados[[i]]$results$address_components[[1]]$types) {
+          codigo_postal <-
+            as.data.frame(resultados[[i]]$results$address_components[[1]]) %>%
+            filter(types == "postal_code") %>%
             pull(long_name)
         } else {
           codigo_postal <- NA
-        }}
-
-      ## Creación de formato para la información de dirección y las coordenadas
-
+        }
+      }
       direccion <- resultados[[i]]$results$formatted_address
       lat <- resultados[[i]]$results$geometry$location$lat
       lon <- resultados[[i]]$results$geometry$location$lng
-
-      ## Asignación de NA si no se encuentra la información de localidad, dirección o las coordenadas
-      if(is_empty(localidad)) {
-        localidad <- NA
+      if (localidad == T) {
+        if (is_empty(localidad)) {
+          localidad <- NA
+        }
       }
-      if(is_empty(direccion)) {
+      if (is_empty(direccion)) {
         direccion <- NA
       }
-      if(is_empty(lon)) {
+      if (is_empty(lon)) {
         lon <- NA
       }
-      if(is_empty(lat)) {
-        lat <- NA}
-
-      ## Creación del dataframe final, dependiendo de si pide información con barrio y código postal
-      if(barrio == T && codigo_postal == T){
-
-        formato[[i]] <- data.frame(ciudad, localidad, barrio, codigo_postal, direccion, lat, lon)
-
-      } else if(barrio == T && codigo_postal == F){
-
-        formato[[i]] <- data.frame(ciudad, localidad, barrio, direccion, lat, lon)
-
-      } else if(barrio == F && codigo_postal == T){
-
-        formato[[i]] <- data.frame(ciudad, localidad, codigo_postal, direccion, lat, lon)
-
+      if (is_empty(lat)) {
+        lat <- NA
+      }
+      if (barrio == T && codigo_postal == T & localidad == T) {
+        formato[[i]] <- data.frame(
+          ciudad,
+          localidad,
+          barrio,
+          codigo_postal,
+          direccion,
+          lat,
+          lon
+        )
+      } else if (barrio == T && codigo_postal == F & localidad == T) {
+        formato[[i]] <- data.frame(
+          ciudad, localidad,
+          barrio, direccion, lat, lon
+        )
+      } else if (barrio == F && codigo_postal == T & localidad == T) {
+        formato[[i]] <- data.frame(
+          ciudad, localidad,
+          codigo_postal, direccion, lat, lon
+        )
+      } else if (barrio == T && codigo_postal == T & localidad == F) {
+        formato[[i]] <- data.frame(
+          ciudad,
+          barrio, codigo_postal, direccion, lat, lon
+        )
+      } else if (barrio == T && codigo_postal == F & localidad == F) {
+        formato[[i]] <- data.frame(
+          ciudad,
+          barrio, direccion, lat, lon
+        )
+      } else if (barrio == F && codigo_postal == T & localidad == F) {
+        formato[[i]] <- data.frame(
+          ciudad,
+          codigo_postal, direccion, lat, lon
+        )
       } else {
-
-        formato[[i]] <- data.frame(ciudad, localidad, direccion, lat, lon)
-
+        formato[[i]] <- data.frame(
+          ciudad, localidad,
+          direccion, lat, lon
+        )
       }
     }
   }
-
-
-  # Selección del primer resultado encontrado como válid ------------------------------------------------------------
-  lista <- lapply(formato, function(x) x %>% slice(1))
-
-  # Depuración de la base de datos de salida ------------------------------------------------------------------------
-
-  ## Cambio de localidades con nombres extraños y asignación de sufijo (opcional)
-  geocoded <- bind_rows(lista) %>%
-    mutate(localidad = case_when(localidad == "Comuna Ciudad Bolívar" ~ "Ciudad Bolívar",
-                                 localidad == "Comuna Chapinero"  ~ "Chapinero",
-                                 localidad == "Santa Fé" ~ "Santa Fe",
-                                 ciudad != "Bogotá" && !is.na(ciudad) ~ "Fuera de Bogotá",
-                                 is.na(localidad) ~ NA_character_,
-                                 is.na(ciudad) ~ NA_character_,
-                                 T ~ localidad)) %>%
-    {if(!is.null(suffix)) rename_with(., ~paste0(., suffix)) else .}
-
-  ## Creación del dataframe de salida
-  if(join == T){
-
-    # if(is.null(join_id)) warning("No se especificó join_id, se unirán los dataframes según todas las columnas coincidentes")
-
+  lista <- lapply(formato, function(x) {
+    x %>% slice(1)
+  })
+  if (localidad == T) {
+    geocoded <-
+      bind_rows(lista) %>%
+      mutate(
+        localidad = case_when(
+          localidad ==
+            "Comuna Ciudad Bolívar" ~ "Ciudad Bolívar",
+          localidad ==
+            "Comuna Chapinero" ~ "Chapinero",
+          localidad == "Santa Fé" ~
+            "Santa Fe",
+          ciudad != "Bogotá" && !is.na(ciudad) ~
+            "Fuera de Bogotá",
+          is.na(localidad) ~ NA_character_,
+          is.na(ciudad) ~ NA_character_,
+          T ~ localidad
+        )
+      ) %>%
+      {
+        if (!is.null(suffix)) {
+          rename_with(., ~
+                        paste0(., suffix))
+        } else {
+          .
+        }
+      }
+  } else {
+    geocoded <- bind_rows(lista) %>%
+      {
+        if (!is.null(suffix)) {
+          rename_with(., ~
+                        paste0(., suffix))
+        } else {
+          .
+        }
+      }
+  }
+  if (join == T) {
     union <- df %>%
       bind_cols(., geocoded) %>%
-      {if(is.null(join_id)) full_join(original, .) else full_join(original, ., by = join_id)}
-
-
+      {
+        if (is.null(join_id)) {
+          full_join(original, .)
+        } else {
+          full_join(original, ., by = join_id)
+        }
+      }
   } else {
-
     union <- geocoded
-
   }
-
   return(union)
-
 }
